@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { productsAPI, ordersAPI } from './services/api';
+import { productsAPI, ordersAPI } from '../services/api';
 
 function NewOrder({ onNavigate, editingOrder, selectedDate }) {
   const [loading, setLoading] = useState(false);
@@ -203,7 +203,7 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
               <option value="">Seleccionar...</option>
               {products.map(product => (
                 <option key={product.id} value={product.id}>
-                  {product.name} - ${product.price.toFixed(2)}
+                  {product.name} - ${parseFloat(product.price).toFixed(2)}
                   {product.is_small ? ' (3x1$)' : ''}
                 </option>
               ))}
