@@ -33,7 +33,7 @@ function OrdersList({ onNavigate, selectedDate }) {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('¿Estás seguro de eliminar este pedido?')) return;
+    if (!window.confirm('¿Estás segura de eliminar este pedido amor? ')) return;
     try {
       setDeletingId(id);
       await ordersAPI.delete(id);
@@ -113,10 +113,10 @@ function OrdersList({ onNavigate, selectedDate }) {
         <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-8 text-center">
           <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
-            No hay pedidos
+            No hay pedidos para este dia amor
           </h3>
           <p className="text-gray-600 mb-4">
-            No se encontraron pedidos para este día
+            No se encontraron pedidos para este día u.u
           </p>
           <button
             onClick={() => onNavigate('newOrder')}

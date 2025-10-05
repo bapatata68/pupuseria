@@ -100,7 +100,7 @@ function App() {
               <div className="text-3xl">♥</div>
               <div>
                 <h1 className="text-xl font-bold">negocios de mi linda</h1>
-                <p className="text-xs opacity-90">hecho con mucho ❤</p>
+                <p className="text-xs opacity-90">espero que vendas mucho preciosa</p>
               </div>
             </div>
             <button
@@ -119,7 +119,7 @@ function App() {
 
       <footer className="bg-white border-t border-blue-100 mt-8 py-4 shadow-sm">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600">
-          <p className="font-medium">Sistema de Ventas Pupusería v1.0</p>
+          <p className="font-medium">Sistema de Ventas de mi linda y asociados </p>
           <p className="text-xs mt-1 text-gray-500">
             {new Date().toLocaleDateString('es-SV', {
               weekday: 'long',

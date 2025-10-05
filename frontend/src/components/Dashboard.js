@@ -74,7 +74,7 @@ function Dashboard({ onNavigate, selectedDate }) {
     <div className="space-y-6 animate-fadeIn">
       {/* Título y Fecha */}
       <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6 transform transition-all duration-300 hover:shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Dashboard de mi linda</h2>
         <p className="text-sm text-gray-500 mt-1">
           {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-SV', {
             weekday: 'long',
@@ -242,10 +242,10 @@ function Dashboard({ onNavigate, selectedDate }) {
         <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-8 text-center animate-fadeIn">
           <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
-            No hay pedidos aún
+            No hay pedidos aún, a chambear mi bonita
           </h3>
           <p className="text-gray-600 mb-4">
-            Comienza agregando tu primer pedido del día
+            Comienza agregando tu primer pedido del día amor
           </p>
           <button
             onClick={() => onNavigate('newOrder')}

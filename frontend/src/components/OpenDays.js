@@ -44,7 +44,8 @@ function OpenDays({ onNavigate }) {
 
   const handleToggle = async (date, currentStatus) => {
     try {
-      await openDaysAPI.update(date, !currentStatus);
+      const cleanDate = date.split('T')[0];
+      await openDaysAPI.update(cleanDate, !currentStatus);
       loadDays();
     } catch (err) {
       alert('Error actualizando día: ' + err.message);
@@ -58,7 +59,9 @@ function OpenDays({ onNavigate }) {
     }
 
     try {
-      await openDaysAPI.update(selectedDate, true);
+      const cleanDate = selectedDate.split('T')[0];
+      await openDaysAPI.update(cleanDate, true);
+
       setSelectedDate('');
       loadDays();
     } catch (err) {
@@ -184,7 +187,7 @@ function OpenDays({ onNavigate }) {
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4 text-gray-400" />
                       <span className="text-sm font-medium text-gray-900">
-                        {new Date(day.date + 'T00:00:00').toLocaleDateString('es-SV', {
+                        {new Date(day.date.split('T')[0]).toLocaleDateString('es-SV', {
                           weekday: 'long',
                           year: 'numeric',
                           month: 'long',
