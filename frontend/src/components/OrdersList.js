@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { ordersAPI } from '../services/api';
+import { ordersAPI } from './services/api';
 
 function OrdersList({ onNavigate, selectedDate }) {
   const [orders, setOrders] = useState([]);

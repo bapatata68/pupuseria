@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { productsAPI, ordersAPI } from '../services/api';
+import { productsAPI, ordersAPI } from './services/api';
 
 function NewOrder({ onNavigate, editingOrder, selectedDate }) {
   const [loading, setLoading] = useState(false);

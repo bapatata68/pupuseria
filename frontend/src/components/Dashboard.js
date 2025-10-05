@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { ordersAPI, reportsAPI } from '../services/api';
+import { ordersAPI, reportsAPI } from './services/api';
 
 function Dashboard({ onNavigate, selectedDate }) {
   const [loading, setLoading] = useState(true);

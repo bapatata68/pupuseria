@@ -11,7 +11,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { reportsAPI } from '../services/api';
+import { reportsAPI } from './services/api';
 
 function DailyReport({ onNavigate, selectedDate, onDateChange }) {
   const [report, setReport] = useState(null);
