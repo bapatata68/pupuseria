@@ -9,9 +9,17 @@
  * - Animaciones de entrada
  */
 
+/**
+ * ============================================
+ * NUEVO PEDIDO - Formulario de Registro
+ * ============================================
+ * Migrado a iconos de lucide-react
+ */
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { productsAPI, ordersAPI } from '../services/api';
+import { Plus, X, Trash2, ShoppingCart, Package } from 'lucide-react';
 
 function NewOrder({ onNavigate, editingOrder, selectedDate }) {
   const [loading, setLoading] = useState(false);
@@ -22,7 +30,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  // Estado para nuevo ítem
   const [newItem, setNewItem] = useState({
     product_id: '',
     masa: 'maíz',
@@ -63,7 +70,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
     }
   };
 
-  // Calcular subtotal de un ítem
   const calculateItemSubtotal = (item) => {
     const product = products.find(p => p.id === parseInt(item.product_id));
     if (!product) return 0;
@@ -71,7 +77,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
     const quantity = parseInt(item.quantity) || 0;
     const price = parseFloat(product.price);
 
-    // Si es producto pequeño (3x1$), aplicar promoción
     if (product.is_small) {
       const completeGroups = Math.floor(quantity / 3);
       const remaining = quantity % 3;
@@ -81,14 +86,12 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
     return quantity * price;
   };
 
-  // Calcular total del pedido
   const calculateTotal = () => {
     const itemsTotal = items.reduce((sum, item) => sum + calculateItemSubtotal(item), 0);
     const delivery = isDelivery ? (parseFloat(deliveryCost) || 0) : 0;
     return itemsTotal + delivery;
   };
 
-  // Agregar ítem a la lista
   const addItem = () => {
     if (!newItem.product_id) {
       setError('Selecciona un producto');
@@ -105,12 +108,10 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
     setError(null);
   };
 
-  // Eliminar ítem de la lista
   const removeItem = (index) => {
     setItems(items.filter((_, i) => i !== index));
   };
 
-  // Guardar pedido
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -144,7 +145,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
         setSuccess('Pedido creado exitosamente');
       }
 
-      // Redirigir después de 1 segundo
       setTimeout(() => onNavigate('orders'), 1000);
     } catch (err) {
       setError(err.message);
@@ -163,9 +163,10 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
           </h2>
           <button
             onClick={() => onNavigate('orders')}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 hover:text-gray-700 transition-colors flex items-center"
           >
-            ✕ Cancelar
+            <X className="w-5 h-5 mr-1" />
+            Cancelar
           </button>
         </div>
       </div>
@@ -185,12 +186,12 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
 
       {/* Formulario Agregar Ítem */}
       <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <Package className="w-5 h-5 mr-2" />
           Agregar Producto
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Selector de Producto */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Producto
@@ -210,7 +211,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
             </select>
           </div>
 
-          {/* Selector de Masa */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Masa
@@ -225,7 +225,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
             </select>
           </div>
 
-          {/* Cantidad */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Cantidad
@@ -242,9 +241,10 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
 
         <button
           onClick={addItem}
-          className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+          className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center"
         >
-          ➕ Agregar
+          <Plus className="w-5 h-5 mr-2" />
+          Agregar
         </button>
       </div>
 
@@ -252,7 +252,8 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
       {items.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden animate-slideUp">
           <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+              <ShoppingCart className="w-5 h-5 mr-2" />
               Productos del Pedido
             </h3>
           </div>
@@ -307,7 +308,7 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
                           onClick={() => removeItem(index)}
                           className="text-red-500 hover:text-red-700 transition-colors"
                         >
-                          🗑️
+                          <Trash2 className="w-5 h-5 mx-auto" />
                         </button>
                       </td>
                     </tr>
@@ -378,7 +379,6 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
         </div>
       </div>
 
-      {/* Animaciones CSS */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }

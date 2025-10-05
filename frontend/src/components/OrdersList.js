@@ -2,14 +2,12 @@
  * ============================================
  * LISTA DE PEDIDOS - Ver Pedidos del Día
  * ============================================
- * Mejoras visuales:
- * - Cards individuales por pedido
- * - Gradientes en resumen
- * - Botón flotante para nuevo pedido
+ * Migrado a iconos de lucide-react
  */
 
 import { useState, useEffect } from 'react';
 import { ordersAPI } from '../services/api';
+import { ShoppingBag, DollarSign, Edit, Trash2, Truck, Plus, Package } from 'lucide-react';
 
 function OrdersList({ onNavigate, selectedDate }) {
   const [orders, setOrders] = useState([]);
@@ -89,11 +87,17 @@ function OrdersList({ onNavigate, selectedDate }) {
       {/* Resumen */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105">
-          <p className="text-sm opacity-90 font-medium">Total de Pedidos</p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm opacity-90 font-medium">Total de Pedidos</p>
+            <ShoppingBag className="w-8 h-8 opacity-80" />
+          </div>
           <p className="text-2xl font-bold mt-2">{orders.length}</p>
         </div>
         <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105">
-          <p className="text-sm opacity-90 font-medium">Total de Ventas</p>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm opacity-90 font-medium">Total de Ventas</p>
+            <DollarSign className="w-8 h-8 opacity-80" />
+          </div>
           <p className="text-2xl font-bold mt-2">${totalSales.toFixed(2)}</p>
         </div>
       </div>
@@ -107,7 +111,7 @@ function OrdersList({ onNavigate, selectedDate }) {
       {/* Lista de Pedidos */}
       {orders.length === 0 ? (
         <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-8 text-center">
-          <div className="text-6xl mb-4">📭</div>
+          <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
             No hay pedidos
           </h3>
@@ -133,23 +137,26 @@ function OrdersList({ onNavigate, selectedDate }) {
                   </span>
                   {order.is_delivery && (
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                      🚚 Entrega
+                      <Truck className="w-3 h-3 mr-1" />
+                      Entrega
                     </span>
                   )}
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => handleEdit(order)}
-                    className="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+                    className="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors flex items-center"
                   >
-                    ✏️ Editar
+                    <Edit className="w-4 h-4 mr-1" />
+                    Editar
                   </button>
                   <button
                     onClick={() => handleDelete(order.id)}
                     disabled={deletingId === order.id}
-                    className="text-red-500 hover:text-red-700 font-semibold text-sm disabled:opacity-50 transition-colors"
+                    className="text-red-500 hover:text-red-700 font-semibold text-sm disabled:opacity-50 transition-colors flex items-center"
                   >
-                    🗑️ Eliminar
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    Eliminar
                   </button>
                 </div>
               </div>
@@ -208,12 +215,11 @@ function OrdersList({ onNavigate, selectedDate }) {
       {/* Botón flotante para nuevo pedido */}
       <button
         onClick={() => onNavigate('newOrder')}
-        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-full w-14 h-14 shadow-lg flex items-center justify-center text-2xl transition-all duration-300 transform hover:scale-110"
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-full w-14 h-14 shadow-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110"
       >
-        ➕
+        <Plus className="w-6 h-6" />
       </button>
 
-      {/* Animaciones CSS */}
       <style jsx>{`
         @keyframes fadeIn {
           from { opacity: 0; }

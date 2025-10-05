@@ -3,6 +3,7 @@
  * DASHBOARD - Vista Principal
  * ============================================
  * Diseño mejorado con:
+ * - Iconos de lucide-react
  * - Gradientes azules y tonos complementarios
  * - Animaciones suaves de entrada
  * - Cards con efectos hover
@@ -12,6 +13,18 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { ordersAPI, reportsAPI } from '../services/api';
+import {
+  DollarSign,
+  ShoppingBag,
+  Truck,
+  Plus,
+  ClipboardList,
+  Cookie,
+  BarChart3,
+  Calendar,
+  RefreshCw,
+  Package
+} from 'lucide-react';
 
 function Dashboard({ onNavigate, selectedDate }) {
   const [loading, setLoading] = useState(true);
@@ -91,7 +104,7 @@ function Dashboard({ onNavigate, selectedDate }) {
                 ${summary.totalSales.toFixed(2)}
               </p>
             </div>
-            <div className="text-5xl opacity-80">💰</div>
+            <DollarSign className="w-12 h-12 opacity-80" />
           </div>
         </div>
 
@@ -102,7 +115,7 @@ function Dashboard({ onNavigate, selectedDate }) {
               <p className="text-sm opacity-90 font-medium">Pedidos</p>
               <p className="text-3xl font-bold mt-2">{summary.orderCount}</p>
             </div>
-            <div className="text-5xl opacity-80">📋</div>
+            <ShoppingBag className="w-12 h-12 opacity-80" />
           </div>
         </div>
 
@@ -113,7 +126,7 @@ function Dashboard({ onNavigate, selectedDate }) {
               <p className="text-sm opacity-90 font-medium">Entregas</p>
               <p className="text-3xl font-bold mt-2">{summary.deliveryCount}</p>
             </div>
-            <div className="text-5xl opacity-80">🚚</div>
+            <Truck className="w-12 h-12 opacity-80" />
           </div>
         </div>
       </div>
@@ -124,7 +137,7 @@ function Dashboard({ onNavigate, selectedDate }) {
           onClick={() => onNavigate('newOrder')}
           className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="text-2xl mb-1">➕</div>
+          <Plus className="w-6 h-6 mx-auto mb-1" />
           <div>Nuevo Pedido</div>
         </button>
 
@@ -132,7 +145,7 @@ function Dashboard({ onNavigate, selectedDate }) {
           onClick={() => onNavigate('orders')}
           className="bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="text-2xl mb-1">📋</div>
+          <ClipboardList className="w-6 h-6 mx-auto mb-1" />
           <div>Ver Pedidos</div>
         </button>
 
@@ -140,7 +153,7 @@ function Dashboard({ onNavigate, selectedDate }) {
           onClick={() => onNavigate('products')}
           className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="text-2xl mb-1">🫓</div>
+          <Cookie className="w-6 h-6 mx-auto mb-1" />
           <div>Productos</div>
         </button>
 
@@ -148,7 +161,7 @@ function Dashboard({ onNavigate, selectedDate }) {
           onClick={() => onNavigate('report')}
           className="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="text-2xl mb-1">📊</div>
+          <BarChart3 className="w-6 h-6 mx-auto mb-1" />
           <div>Reporte</div>
         </button>
 
@@ -156,7 +169,7 @@ function Dashboard({ onNavigate, selectedDate }) {
           onClick={() => onNavigate('openDays')}
           className="bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="text-2xl mb-1">📅</div>
+          <Calendar className="w-6 h-6 mx-auto mb-1" />
           <div>Días Abiertos</div>
         </button>
 
@@ -164,7 +177,7 @@ function Dashboard({ onNavigate, selectedDate }) {
           onClick={loadDashboardData}
           className="bg-gradient-to-r from-slate-500 to-gray-600 hover:from-slate-600 hover:to-gray-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
         >
-          <div className="text-2xl mb-1">🔄</div>
+          <RefreshCw className="w-6 h-6 mx-auto mb-1" />
           <div>Actualizar</div>
         </button>
       </div>
@@ -173,7 +186,8 @@ function Dashboard({ onNavigate, selectedDate }) {
       {summary.products.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden animate-slideUp">
           <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100">
-            <h3 className="text-lg font-semibold text-gray-800">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+              <Package className="w-5 h-5 mr-2" />
               Ventas por Producto
             </h3>
           </div>
@@ -226,7 +240,7 @@ function Dashboard({ onNavigate, selectedDate }) {
       {/* Sin datos */}
       {summary.orderCount === 0 && !loading && (
         <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-8 text-center animate-fadeIn">
-          <div className="text-6xl mb-4">📭</div>
+          <Package className="w-16 h-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
             No hay pedidos aún
           </h3>

@@ -2,16 +2,25 @@
  * ============================================
  * REPORTE DIARIO - Exportación y Análisis
  * ============================================
- * Vista completa de reportes con:
- * - Resumen de métricas
- * - Detalle de productos vendidos
- * - Top 5 productos más vendidos
- * - Exportación a CSV
+ * Migrado a iconos de lucide-react
  */
 
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { reportsAPI } from '../services/api';
+import {
+  ShoppingBag,
+  DollarSign,
+  Truck,
+  Bike,
+  Download,
+  BarChart3,
+  TrendingUp,
+  Package,
+  Trophy,
+  Medal,
+  Award
+} from 'lucide-react';
 
 function DailyReport({ onNavigate, selectedDate, onDateChange }) {
   const [report, setReport] = useState(null);
@@ -97,7 +106,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Pedidos</p>
-            <span className="text-2xl opacity-80">📋</span>
+            <ShoppingBag className="w-8 h-8 opacity-80" />
           </div>
           <p className="text-3xl font-bold">{report?.totals.orders || 0}</p>
           <div className="mt-2 h-1 bg-white bg-opacity-20 rounded-full overflow-hidden">
@@ -109,13 +118,11 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         <div className="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Ventas</p>
-            <span className="text-2xl opacity-80">💰</span>
+            <DollarSign className="w-8 h-8 opacity-80" />
           </div>
           <p className="text-3xl font-bold">${(report?.totals.sales || 0).toFixed(2)}</p>
           <div className="mt-2 flex items-center text-xs opacity-80">
-            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clipRule="evenodd" />
-            </svg>
+            <TrendingUp className="w-4 h-4 mr-1" />
             Total del día
           </div>
         </div>
@@ -124,7 +131,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         <div className="bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Entregas</p>
-            <span className="text-2xl opacity-80">🚚</span>
+            <Truck className="w-8 h-8 opacity-80" />
           </div>
           <p className="text-3xl font-bold">{report?.totals.delivery_orders || 0}</p>
           <div className="mt-2 text-xs opacity-80">
@@ -140,7 +147,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn" style={{ animationDelay: '0.3s' }}>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Costo Envíos</p>
-            <span className="text-2xl opacity-80">🏍️</span>
+            <Bike className="w-8 h-8 opacity-80" />
           </div>
           <p className="text-3xl font-bold">${(report?.totals.delivery || 0).toFixed(2)}</p>
           <div className="mt-2 text-xs opacity-80">
@@ -155,7 +162,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         disabled={exporting || !report?.totals.orders}
         className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-2 group"
       >
-        <span className="text-xl group-hover:animate-bounce">📥</span>
+        <Download className="w-5 h-5 group-hover:animate-bounce" />
         <span>{exporting ? 'Exportando...' : 'Exportar a CSV'}</span>
         {exporting && (
           <svg className="animate-spin h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -170,7 +177,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-blue-100 animate-slideUp">
           <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-sky-50 border-b border-blue-100">
             <h3 className="font-bold text-lg text-blue-900 flex items-center">
-              <span className="mr-2">📊</span>
+              <BarChart3 className="w-5 h-5 mr-2" />
               Detalle de Ventas por Producto
             </h3>
           </div>
@@ -240,7 +247,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         </div>
       ) : (
         <div className="bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl shadow-lg p-12 text-center border-2 border-dashed border-blue-200 animate-fadeIn">
-          <div className="text-6xl mb-4 animate-bounce">📭</div>
+          <Package className="w-16 h-16 mx-auto mb-4 text-gray-400 animate-bounce" />
           <h3 className="text-xl font-bold text-blue-900 mb-2">No hay datos para este día</h3>
           <p className="text-blue-600">Selecciona una fecha diferente o crea pedidos</p>
         </div>
@@ -250,7 +257,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
       {report?.top_products && report.top_products.length > 0 && (
         <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-lg p-6 border border-blue-100 animate-slideUp" style={{ animationDelay: '0.2s' }}>
           <h3 className="font-bold text-xl mb-6 text-blue-900 flex items-center">
-            <span className="mr-2">🏆</span>
+            <Trophy className="w-6 h-6 mr-2" />
             Top 5 Productos Más Vendidos
           </h3>
           <div className="space-y-4">
@@ -268,7 +275,10 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
                         idx === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-500 text-white shadow-md' :
                           'bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700'}
                   `}>
-                    {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                    {idx === 0 ? <Trophy className="w-6 h-6" /> :
+                      idx === 1 ? <Medal className="w-6 h-6" /> :
+                        idx === 2 ? <Award className="w-6 h-6" /> :
+                          idx + 1}
                   </div>
                   <span className="font-semibold text-gray-800 text-lg">{product.name}</span>
                 </div>
