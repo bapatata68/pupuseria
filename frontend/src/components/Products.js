@@ -225,9 +225,9 @@ function Products({ onNavigate }) {
                 <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">
                   Producto
                 </th>
-                {/* <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider"> */}
-                {/*   Masa */}
-                {/* </th> */}
+                <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">
+                  Masa
+                </th>
                 <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase tracking-wider">
                   Precio
                 </th>
