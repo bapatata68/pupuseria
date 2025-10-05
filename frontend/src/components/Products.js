@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { productsAPI } from './services/api';
+import { productsAPI } from '../services/api';
 
 function Products({ onNavigate }) {
   const [products, setProducts] = useState([]);

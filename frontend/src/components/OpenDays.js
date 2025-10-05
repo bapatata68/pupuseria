@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { openDaysAPI } from './services/api';
+import { openDaysAPI } from '../services/api';
 
 function OpenDays({ onNavigate }) {
   const [days, setDays] = useState([]);
