@@ -33,8 +33,7 @@ function OrdersList({ onNavigate, selectedDate }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar este pedido?')) return;
-
+    if (!window.confirm('¿Estás seguro de eliminar este pedido?')) return;
     try {
       setDeletingId(id);
       await ordersAPI.delete(id);

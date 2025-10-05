@@ -6,8 +6,7 @@
  * Maneja errores y formatos de respuesta
  */
 
-const API_BASE_URL = 'https://pupuseria-backend.onrender.com/api';
-
+const API_URL = process.env.REACT_APP_API_URL || 'https://pupuseria-backend.onrender.com/api';
 // Helper para manejar respuestas
 const handleResponse = async (response) => {
   const data = await response.json();

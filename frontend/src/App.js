@@ -13,7 +13,6 @@
  * - Control de días abiertos/cerrados
  */
 
-import React from 'react';
 import { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import NewOrder from './components/NewOrder';
@@ -29,7 +28,6 @@ function App() {
     new Date().toISOString().split('T')[0]
   );
 
-  // Título de la página según la vista actual
   useEffect(() => {
     const titles = {
       dashboard: 'Dashboard',
@@ -42,7 +40,6 @@ function App() {
     document.title = `${titles[currentView]} - Pupusería`;
   }, [currentView]);
 
-  // Función para navegar y resetear estado si es necesario
   const navigate = (view, options = {}) => {
     setCurrentView(view);
     if (options.editOrder) {
@@ -52,7 +49,6 @@ function App() {
     }
   };
 
-  // Renderizar vista actual
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
@@ -97,7 +93,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -118,12 +113,10 @@ function App() {
         </div>
       </header>
 
-      {/* Contenido Principal */}
       <main className="container mx-auto px-4 py-6">
         {renderView()}
       </main>
 
-      {/* Footer */}
       <footer className="bg-white border-t mt-8 py-4">
         <div className="container mx-auto px-4 text-center text-sm text-gray-600">
           <p>Sistema de Ventas Pupusería v1.0</p>

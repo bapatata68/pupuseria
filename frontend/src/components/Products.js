@@ -56,8 +56,7 @@ function Products({ onNavigate }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este producto?')) return;
-    try {
+    if (!window.confirm('¿Eliminar este producto?')) return; try {
       await productsAPI.delete(id);
       loadProducts();
     } catch (err) {
