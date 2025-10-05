@@ -1,3 +1,14 @@
+/**
+ * ============================================
+ * REPORTE DIARIO - Exportación y Análisis
+ * ============================================
+ * Vista completa de reportes con:
+ * - Resumen de métricas
+ * - Detalle de productos vendidos
+ * - Top 5 productos más vendidos
+ * - Exportación a CSV
+ */
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { reportsAPI } from '../services/api';
@@ -6,6 +17,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadReport();
@@ -14,9 +26,11 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
   const loadReport = async () => {
     try {
       setLoading(true);
+      setError(null);
       const response = await reportsAPI.getDaily(selectedDate);
       setReport(response.data);
     } catch (err) {
+      setError(err.message);
       console.error(err);
     } finally {
       setLoading(false);
@@ -35,31 +49,51 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
     }
   };
 
-  if (loading) return <div className="text-center py-12">Cargando reporte...</div>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-4">
+    <div className="space-y-6 animate-fadeIn">
+      {/* Header */}
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">Reporte Diario</h2>
-          <button onClick={() => onNavigate('dashboard')} className="text-gray-600">← Volver</button>
+          <h2 className="text-2xl font-bold text-gray-800">Reporte Diario</h2>
+          <button
+            onClick={() => onNavigate('dashboard')}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            ← Volver
+          </button>
         </div>
       </div>
 
       {/* Selector de Fecha */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <label className="block text-sm font-medium mb-2">Seleccionar Fecha</label>
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Seleccionar Fecha
+        </label>
         <input
           type="date"
           value={selectedDate}
           onChange={(e) => onDateChange(e.target.value)}
-          className="px-3 py-2 border rounded-lg"
+          className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
         />
       </div>
 
-      {/* Resumen - Paleta Azul con Animaciones */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl animate-slideDown">
+          {error}
+        </div>
+      )}
+
+      {/* Resumen - Cards de Métricas */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Pedidos - Azul Eléctrico (Destacado) */}
+        {/* Pedidos */}
         <div className="bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Pedidos</p>
@@ -71,7 +105,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
           </div>
         </div>
 
-        {/* Ventas - Verde Azulado */}
+        {/* Ventas */}
         <div className="bg-gradient-to-br from-teal-500 to-teal-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Ventas</p>
@@ -86,7 +120,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
           </div>
         </div>
 
-        {/* Entregas - Azul Cielo */}
+        {/* Entregas */}
         <div className="bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Entregas</p>
@@ -102,7 +136,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
           </div>
         </div>
 
-        {/* Costo de Envíos - Índigo */}
+        {/* Costo de Envíos */}
         <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-xl shadow-lg p-5 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-fadeIn" style={{ animationDelay: '0.3s' }}>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium opacity-90">Costo Envíos</p>
@@ -115,7 +149,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         </div>
       </div>
 
-      {/* Botón Exportar - Mejorado */}
+      {/* Botón Exportar */}
       <button
         onClick={handleExport}
         disabled={exporting || !report?.totals.orders}
@@ -131,7 +165,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         )}
       </button>
 
-      {/* Productos Vendidos - Tabla Mejorada */}
+      {/* Productos Vendidos - Tabla Detallada */}
       {report?.products && report.products.length > 0 ? (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-blue-100 animate-slideUp">
           <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-sky-50 border-b border-blue-100">
@@ -144,10 +178,18 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
             <table className="min-w-full divide-y divide-blue-100">
               <thead className="bg-blue-50">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Producto</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Masa</th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase tracking-wider">Cantidad</th>
-                  <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase tracking-wider">Total</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">
+                    Producto
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">
+                    Masa
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase tracking-wider">
+                    Cantidad
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase tracking-wider">
+                    Total
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-blue-50 bg-white">
@@ -204,7 +246,7 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         </div>
       )}
 
-      {/* Top Productos - Rediseñado */}
+      {/* Top 5 Productos */}
       {report?.top_products && report.top_products.length > 0 && (
         <div className="bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-lg p-6 border border-blue-100 animate-slideUp" style={{ animationDelay: '0.2s' }}>
           <h3 className="font-bold text-xl mb-6 text-blue-900 flex items-center">
@@ -240,12 +282,23 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
         </div>
       )}
 
-      {/* Agregar estilos CSS para animaciones */}
+      {/* Estilos CSS para animaciones */}
       <style jsx>{`
         @keyframes fadeIn {
           from {
             opacity: 0;
             transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
           }
           to {
             opacity: 1;
@@ -269,6 +322,10 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
           opacity: 0;
         }
 
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out forwards;
+        }
+
         .animate-slideUp {
           animation: slideUp 0.6s ease-out forwards;
           opacity: 0;
@@ -277,4 +334,5 @@ function DailyReport({ onNavigate, selectedDate, onDateChange }) {
     </div>
   );
 }
+
 export default DailyReport;
