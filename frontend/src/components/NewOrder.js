@@ -2,11 +2,11 @@
  * ============================================
  * NUEVO PEDIDO - Formulario de Registro
  * ============================================
- * Permite crear y editar pedidos con:
- * - Selección de productos y masa
- * - Cálculo automático de subtotales
- * - Opción de entrega a domicilio
- * - Aplicación automática de promoción 3x1$
+ * Mejoras de diseño:
+ * - Inputs con focus ring azul
+ * - Tabla con hover effects
+ * - Gradientes en botones principales
+ * - Animaciones de entrada
  */
 
 import React from 'react';
@@ -154,16 +154,16 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-800">
             {editingOrder ? 'Editar Pedido' : 'Nuevo Pedido'}
           </h2>
           <button
             onClick={() => onNavigate('orders')}
-            className="text-gray-600 hover:text-gray-800"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             ✕ Cancelar
           </button>
@@ -172,19 +172,19 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
 
       {/* Mensajes */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl animate-slideDown">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl animate-slideDown">
           {success}
         </div>
       )}
 
       {/* Formulario Agregar Ítem */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Agregar Producto
         </h3>
@@ -198,7 +198,7 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
             <select
               value={newItem.product_id}
               onChange={(e) => setNewItem({ ...newItem, product_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
               <option value="">Seleccionar...</option>
               {products.map(product => (
@@ -218,7 +218,7 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
             <select
               value={newItem.masa}
               onChange={(e) => setNewItem({ ...newItem, masa: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             >
               <option value="maíz">Maíz</option>
               <option value="arroz">Arroz</option>
@@ -235,14 +235,14 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
               min="1"
               value={newItem.quantity}
               onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             />
           </div>
         </div>
 
         <button
           onClick={addItem}
-          className="mt-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition"
+          className="mt-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
         >
           ➕ Agregar
         </button>
@@ -250,8 +250,8 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
 
       {/* Lista de Ítems */}
       {items.length > 0 && (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-4 py-3 bg-gray-50 border-b">
+        <div className="bg-white rounded-xl shadow-sm border border-blue-50 overflow-hidden animate-slideUp">
+          <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-100">
             <h3 className="text-lg font-semibold text-gray-800">
               Productos del Pedido
             </h3>
@@ -261,19 +261,19 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Producto
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Masa
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
                     Cantidad
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
                     Subtotal
                   </th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
                     Acción
                   </th>
                 </tr>
@@ -284,28 +284,28 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
                   const subtotal = calculateItemSubtotal(item);
 
                   return (
-                    <tr key={index} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                    <tr key={index} className="hover:bg-blue-50 transition-colors duration-150">
+                      <td className="px-6 py-4 text-sm text-gray-900">
                         {product?.name || 'Producto'}
                         {product?.is_small && (
-                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                             3x1$
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 capitalize">
+                      <td className="px-6 py-4 text-sm text-gray-600 capitalize">
                         {item.masa}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-center font-medium">
+                      <td className="px-6 py-4 text-sm text-gray-900 text-center font-medium">
                         {item.quantity}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900 text-right font-semibold">
+                      <td className="px-6 py-4 text-sm text-blue-600 text-right font-semibold">
                         ${subtotal.toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-6 py-4 text-center">
                         <button
                           onClick={() => removeItem(index)}
-                          className="text-red-600 hover:text-red-800 font-semibold"
+                          className="text-red-500 hover:text-red-700 transition-colors"
                         >
                           🗑️
                         </button>
@@ -320,14 +320,14 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
       )}
 
       {/* Opciones de Entrega */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
         <div className="flex items-center mb-4">
           <input
             type="checkbox"
             id="delivery"
             checked={isDelivery}
             onChange={(e) => setIsDelivery(e.target.checked)}
-            className="w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+            className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
           <label htmlFor="delivery" className="ml-3 text-sm font-medium text-gray-700">
             ¿Entrega a domicilio?
@@ -346,17 +346,17 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
               value={deliveryCost}
               onChange={(e) => setDeliveryCost(e.target.value)}
               placeholder="0.00"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             />
           </div>
         )}
       </div>
 
       {/* Total y Guardar */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-blue-50 p-6">
         <div className="flex items-center justify-between mb-6">
           <span className="text-2xl font-bold text-gray-800">Total:</span>
-          <span className="text-3xl font-bold text-orange-600">
+          <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
             ${calculateTotal().toFixed(2)}
           </span>
         </div>
@@ -364,19 +364,38 @@ function NewOrder({ onNavigate, editingOrder, selectedDate }) {
         <div className="flex gap-3">
           <button
             onClick={() => onNavigate('orders')}
-            className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-lg transition"
+            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-all duration-300"
           >
             Cancelar
           </button>
           <button
             onClick={handleSubmit}
             disabled={loading || items.length === 0}
-            className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
           >
             {loading ? 'Guardando...' : editingOrder ? 'Actualizar Pedido' : 'Guardar Pedido'}
           </button>
         </div>
       </div>
+
+      {/* Animaciones CSS */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideDown {
+          from { transform: translateY(-10px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(10px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+        .animate-slideDown { animation: slideDown 0.3s ease-out; }
+        .animate-slideUp { animation: slideUp 0.5s ease-out; }
+      `}</style>
     </div>
   );
 }
