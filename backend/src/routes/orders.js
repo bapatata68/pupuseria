@@ -167,7 +167,6 @@ router.post('/', async (req, res, next) => {
     let orderTotal = 0;
     const processedItems = [];
 
-    // ✅ CORRECCIÓN: Iterar sobre items (no processedItems)
     for (const item of items) {
       if (!item.product_id || !item.quantity || item.quantity <= 0) {
         await client.query('ROLLBACK');
@@ -264,9 +263,6 @@ router.post('/', async (req, res, next) => {
 // ============================================
 // PUT /api/orders/:id - Actualizar pedido
 // ============================================
-// ============================================
-// PUT /api/orders/:id - Actualizar pedido (CORREGIDO)
-// ============================================
 router.put('/:id', async (req, res, next) => {
   const client = await db.pool.connect();
 
@@ -291,13 +287,11 @@ router.put('/:id', async (req, res, next) => {
 
     await client.query('BEGIN');
 
-    // Eliminar ítems anteriores
     await client.query('DELETE FROM order_items WHERE order_id = $1', [id]);
 
     let orderTotal = 0;
     const processedItems = [];
 
-    // Procesar cada ítem y calcular precios
     for (const item of items) {
       if (!item.product_id || !item.quantity || item.quantity <= 0) {
         await client.query('ROLLBACK');
@@ -335,7 +329,6 @@ router.put('/:id', async (req, res, next) => {
     const finalDeliveryCost = is_delivery ? (delivery_cost || 0) : 0;
     orderTotal += finalDeliveryCost;
 
-    // Actualizar orden
     const orderResult = await client.query(
       `UPDATE orders 
        SET business_day = $1, is_delivery = $2, delivery_cost = $3, total = $4
@@ -344,7 +337,6 @@ router.put('/:id', async (req, res, next) => {
       [business_day, is_delivery || false, finalDeliveryCost, orderTotal, id]
     );
 
-    // ✅ CORRECCIÓN: Usar processedItems con unit_price y line_total calculados
     for (const item of processedItems) {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, masa, quantity, unit_price, line_total)
@@ -355,7 +347,6 @@ router.put('/:id', async (req, res, next) => {
 
     await client.query('COMMIT');
 
-    // Obtener orden completa con ítems
     const completeOrderResult = await db.query(
       `SELECT 
         oi.id,
@@ -387,6 +378,34 @@ router.put('/:id', async (req, res, next) => {
     next(error);
   } finally {
     client.release();
+  }
+});
+
+// ============================================
+// DELETE /api/orders/:id - Eliminar pedido
+// ============================================
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.query(
+      'DELETE FROM orders WHERE id = $1 RETURNING id',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Pedido no encontrado'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Pedido eliminado exitosamente'
+    });
+  } catch (error) {
+    next(error);
   }
 });
 

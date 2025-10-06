@@ -12,18 +12,19 @@ const db = require('../config/database');
 // ============================================
 // GET /api/products - Listar productos únicos
 // ============================================
+// ============================================
+// GET /api/products - Listar productos únicos (SIN duplicados por masa)
+// ============================================
 router.get('/', async (req, res, next) => {
   try {
     const result = await db.query(`
-      SELECT
-        MIN(id) AS id,
+      SELECT DISTINCT ON (name)
+        id,
         name,
-        COALESCE(NULLIF(masa, ''), 'sin masa') AS masa,
-        MIN(price) AS price,
-        BOOL_OR(is_small) AS has_small_version
+        price,
+        is_small
       FROM products
-      GROUP BY name, masa
-      ORDER BY name;
+      ORDER BY name, id
     `);
 
     res.json({
@@ -35,7 +36,6 @@ router.get('/', async (req, res, next) => {
     next(error);
   }
 });
-
 // ============================================
 // POST /api/products - Crear producto
 // ============================================
@@ -149,6 +149,4 @@ router.delete('/:id', async (req, res, next) => {
     next(error);
   }
 });
-
 module.exports = router;
-
