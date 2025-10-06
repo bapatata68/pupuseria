@@ -3,9 +3,6 @@
  * RUTAS - REPORTES
  * ============================================
  * Generación de reportes diarios y exportación a CSV
- * - Resumen de ventas por día
- * - Totales por producto
- * - Exportación en formato CSV
  */
 
 const express = require('express');
@@ -19,7 +16,6 @@ router.get('/daily/:date', async (req, res, next) => {
   try {
     const { date } = req.params;
 
-    // Validar formato de fecha
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({
         success: false,
@@ -27,7 +23,6 @@ router.get('/daily/:date', async (req, res, next) => {
       });
     }
 
-    // 1. Totales generales del día
     const totalsResult = await db.query(
       `SELECT 
         COUNT(*) as total_orders,
@@ -41,7 +36,6 @@ router.get('/daily/:date', async (req, res, next) => {
 
     const totals = totalsResult.rows[0];
 
-    // 2. Resumen por producto
     const productSummary = await db.query(
       `SELECT 
         p.name as product_name,
@@ -59,7 +53,6 @@ router.get('/daily/:date', async (req, res, next) => {
       [date]
     );
 
-    // 3. Top 5 productos más vendidos
     const topProducts = await db.query(
       `SELECT 
         p.name as product_name,
@@ -112,7 +105,6 @@ router.get('/daily/:date/export', async (req, res, next) => {
   try {
     const { date } = req.params;
 
-    // Validar formato de fecha
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return res.status(400).json({
         success: false,
@@ -120,7 +112,6 @@ router.get('/daily/:date/export', async (req, res, next) => {
       });
     }
 
-    // Obtener todos los pedidos del día con sus ítems
     const result = await db.query(
       `SELECT 
         o.id as order_id,
@@ -149,7 +140,6 @@ router.get('/daily/:date/export', async (req, res, next) => {
       });
     }
 
-    // Construir CSV
     const headers = [
       'Fecha',
       'Pedido',
@@ -169,7 +159,7 @@ router.get('/daily/:date/export', async (req, res, next) => {
       csvContent += [
         row.business_day,
         row.order_id,
-        `"${row.product_name}"`, // Comillas para manejar comas en nombres
+        `"${row.product_name}"`,
         row.masa,
         row.quantity,
         row.unit_price.toFixed(2),
@@ -180,25 +170,25 @@ router.get('/daily/:date/export', async (req, res, next) => {
       ].join(',') + '\n';
     });
 
-    // Agregar resumen al final
+    const orderIds = new Set();
     const totalSales = result.rows.reduce((sum, row) => {
-      // Sumar solo una vez por pedido único
-      const orderIds = new Set();
-      return sum + (orderIds.has(row.order_id) ? 0 : parseFloat(row.order_total));
+      if (!orderIds.has(row.order_id)) {
+        orderIds.add(row.order_id);
+        return sum + parseFloat(row.order_total);
+      }
+      return sum;
     }, 0);
 
-    const uniqueOrders = [...new Set(result.rows.map(r => r.order_id))].length;
+    const uniqueOrders = orderIds.size;
 
     csvContent += '\n';
     csvContent += `RESUMEN DEL DÍA\n`;
     csvContent += `Total de pedidos:,${uniqueOrders}\n`;
     csvContent += `Total de ventas:,$${totalSales.toFixed(2)}\n`;
 
-    // Configurar headers para descarga
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename=ventas_${date}.csv`);
 
-    // Agregar BOM para UTF-8 (ayuda con acentos en Excel)
     res.write('\uFEFF');
     res.send(csvContent);
   } catch (error) {
@@ -213,12 +203,10 @@ router.get('/summary', async (req, res, next) => {
   try {
     const { start_date, end_date } = req.query;
 
-    // Si no se proporcionan fechas, usar últimos 7 días
     const endDate = end_date || new Date().toISOString().split('T')[0];
     const startDate = start_date ||
       new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-    // Ventas por día en el rango
     const dailySales = await db.query(
       `SELECT 
         business_day,
@@ -231,7 +219,6 @@ router.get('/summary', async (req, res, next) => {
       [startDate, endDate]
     );
 
-    // Totales del período
     const periodTotals = await db.query(
       `SELECT 
         COUNT(*) as total_orders,

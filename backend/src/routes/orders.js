@@ -3,13 +3,6 @@
  * RUTAS - PEDIDOS
  * ============================================
  * Manejo de pedidos diarios con cálculo automático de totales
- * - Crear pedido con múltiples ítems
- * - Listar pedidos por fecha
- * - Actualizar pedido existente
- * - Eliminar pedido
- * 
- * IMPORTANTE: Todos los cálculos de totales se realizan en el backend
- * para garantizar precisión y consistencia
  */
 const express = require('express');
 const router = express.Router();
@@ -18,24 +11,12 @@ const db = require('../config/database');
 // ============================================
 // FUNCIÓN HELPER: Calcular total de línea
 // ============================================
-/**
- * Calcula el total de una línea de pedido
- * Aplica promoción 3x1$ si el producto es elegible (is_small = true)
- * 
- * @param {number} quantity - Cantidad de productos
- * @param {number} unitPrice - Precio unitario
- * @param {boolean} isSmall - Si aplica promoción 3x1$
- * @returns {number} Total calculado con 2 decimales
- */
 function calculateLineTotal(quantity, unitPrice, isSmall) {
   if (isSmall) {
-    // Promoción 3x1$: grupos completos de 3 + ítems restantes
     const completeGroups = Math.floor(quantity / 3);
     const remaining = quantity % 3;
     return parseFloat((completeGroups * 1.00 + remaining * unitPrice).toFixed(2));
   }
-
-  // Sin promoción: cantidad × precio
   return parseFloat((quantity * unitPrice).toFixed(2));
 }
 
@@ -45,11 +26,8 @@ function calculateLineTotal(quantity, unitPrice, isSmall) {
 router.get('/', async (req, res, next) => {
   try {
     const { date } = req.query;
-
-    // Si no se proporciona fecha, usar hoy
     const businessDay = date || new Date().toISOString().split('T')[0];
 
-    // Obtener pedidos del día
     const ordersResult = await db.query(
       `SELECT 
         id,
@@ -64,7 +42,6 @@ router.get('/', async (req, res, next) => {
       [businessDay]
     );
 
-    // Para cada pedido, obtener sus ítems
     const ordersWithItems = await Promise.all(
       ordersResult.rows.map(async (order) => {
         const itemsResult = await db.query(
@@ -110,7 +87,6 @@ router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    // Obtener pedido
     const orderResult = await db.query(
       `SELECT 
         id,
@@ -131,7 +107,6 @@ router.get('/:id', async (req, res, next) => {
       });
     }
 
-    // Obtener ítems del pedido
     const itemsResult = await db.query(
       `SELECT 
         oi.id,
@@ -173,7 +148,6 @@ router.post('/', async (req, res, next) => {
   try {
     const { business_day, is_delivery, delivery_cost, items } = req.body;
 
-    // Validaciones
     if (!business_day) {
       return res.status(400).json({
         success: false,
@@ -188,13 +162,12 @@ router.post('/', async (req, res, next) => {
       });
     }
 
-    // Iniciar transacción
     await client.query('BEGIN');
 
-    // Calcular total del pedido
     let orderTotal = 0;
+    const processedItems = [];
 
-    // Validar y calcular totales de cada ítem
+    // ✅ CORRECCIÓN: Iterar sobre items (no processedItems)
     for (const item of items) {
       if (!item.product_id || !item.quantity || item.quantity <= 0) {
         await client.query('ROLLBACK');
@@ -204,9 +177,8 @@ router.post('/', async (req, res, next) => {
         });
       }
 
-      // Obtener información del producto
       const productResult = await client.query(
-        'SELECT unit_price, is_small FROM products WHERE id = $1',
+        'SELECT price, is_small FROM products WHERE id = $1',
         [item.product_id]
       );
 
@@ -219,18 +191,20 @@ router.post('/', async (req, res, next) => {
       }
 
       const product = productResult.rows[0];
-      const lineTotal = calculateLineTotal(item.quantity, product.unit_price, product.is_small);
+      const lineTotal = calculateLineTotal(item.quantity, product.price, product.is_small);
 
-      item.unit_price = product.unit_price;
-      item.line_total = lineTotal;
+      processedItems.push({
+        ...item,
+        unit_price: product.price,
+        line_total: lineTotal
+      });
+
       orderTotal += lineTotal;
     }
 
-    // Agregar costo de delivery si aplica
     const finalDeliveryCost = is_delivery ? (delivery_cost || 0) : 0;
     orderTotal += finalDeliveryCost;
 
-    // Crear pedido
     const orderResult = await client.query(
       `INSERT INTO orders (business_day, is_delivery, delivery_cost, total)
        VALUES ($1, $2, $3, $4)
@@ -240,9 +214,8 @@ router.post('/', async (req, res, next) => {
 
     const order = orderResult.rows[0];
 
-    // Insertar ítems del pedido
     const insertedItems = [];
-    for (const item of items) {
+    for (const item of processedItems) {
       const itemResult = await client.query(
         `INSERT INTO order_items (order_id, product_id, masa, quantity, unit_price, line_total)
          VALUES ($1, $2, $3, $4, $5, $6)
@@ -252,10 +225,8 @@ router.post('/', async (req, res, next) => {
       insertedItems.push(itemResult.rows[0]);
     }
 
-    // Confirmar transacción
     await client.query('COMMIT');
 
-    // Obtener pedido completo con nombres de productos
     const completeOrderResult = await db.query(
       `SELECT 
         oi.id,
@@ -300,7 +271,6 @@ router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
     const { business_day, is_delivery, delivery_cost, items } = req.body;
 
-    // Verificar que el pedido existe
     const orderCheck = await client.query('SELECT id FROM orders WHERE id = $1', [id]);
     if (orderCheck.rows.length === 0) {
       return res.status(404).json({
@@ -309,7 +279,6 @@ router.put('/:id', async (req, res, next) => {
       });
     }
 
-    // Validaciones
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
         success: false,
@@ -317,16 +286,13 @@ router.put('/:id', async (req, res, next) => {
       });
     }
 
-    // Iniciar transacción
     await client.query('BEGIN');
 
-    // Eliminar ítems anteriores
     await client.query('DELETE FROM order_items WHERE order_id = $1', [id]);
 
-    // Calcular nuevo total
     let orderTotal = 0;
+    const processedItems = [];
 
-    // Validar y calcular totales de cada ítem
     for (const item of items) {
       if (!item.product_id || !item.quantity || item.quantity <= 0) {
         await client.query('ROLLBACK');
@@ -336,9 +302,8 @@ router.put('/:id', async (req, res, next) => {
         });
       }
 
-      // Obtener información del producto
       const productResult = await client.query(
-        'SELECT unit_price, is_small FROM products WHERE id = $1',
+        'SELECT price, is_small FROM products WHERE id = $1',
         [item.product_id]
       );
 
@@ -351,18 +316,20 @@ router.put('/:id', async (req, res, next) => {
       }
 
       const product = productResult.rows[0];
-      const lineTotal = calculateLineTotal(item.quantity, product.unit_price, product.is_small);
+      const lineTotal = calculateLineTotal(item.quantity, product.price, product.is_small);
 
-      item.unit_price = product.unit_price;
-      item.line_total = lineTotal;
+      processedItems.push({
+        ...item,
+        unit_price: product.price,
+        line_total: lineTotal
+      });
+
       orderTotal += lineTotal;
     }
 
-    // Agregar costo de delivery si aplica
     const finalDeliveryCost = is_delivery ? (delivery_cost || 0) : 0;
     orderTotal += finalDeliveryCost;
 
-    // Actualizar pedido
     const orderResult = await client.query(
       `UPDATE orders 
        SET business_day = $1, is_delivery = $2, delivery_cost = $3, total = $4
@@ -371,8 +338,8 @@ router.put('/:id', async (req, res, next) => {
       [business_day, is_delivery || false, finalDeliveryCost, orderTotal, id]
     );
 
-    // Insertar nuevos ítems
-    for (const item of items) {
+    // ✅ Usar processedItems con unit_price y line_total calculados
+    for (const item of processedItems) {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, masa, quantity, unit_price, line_total)
          VALUES ($1, $2, $3, $4, $5, $6)`,
@@ -380,10 +347,8 @@ router.put('/:id', async (req, res, next) => {
       );
     }
 
-    // Confirmar transacción
     await client.query('COMMIT');
 
-    // Obtener pedido completo actualizado
     const completeOrderResult = await db.query(
       `SELECT 
         oi.id,
@@ -417,6 +382,5 @@ router.put('/:id', async (req, res, next) => {
     client.release();
   }
 });
-
 
 module.exports = router;
